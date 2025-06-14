@@ -15,7 +15,6 @@ export function TaskForm() {
     setLoading(true);
     try {
       await addTask({ name, arrival_time: arrival, duration, priority, status: 'pending' });
-      toast.success('Task added!');
       setName('');
       setArrival(0);
       setDuration(0);
