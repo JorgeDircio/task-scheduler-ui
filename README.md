@@ -1,55 +1,171 @@
-# React + TypeScript + Vite
+# Task Scheduler Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este repositorio contiene el **frontend** de la aplicación Task Scheduler, desarrollado con **React + TypeScript**, usando **Zustand** para manejo de estado, **TailwindCSS** para estilos, y consumiendo la API del backend a través de llamadas HTTP (`axios`).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔩 Tecnologías utilizadas
 
-## Expanding the ESLint configuration
+* **React 19** + **TypeScript**
+* **Vite** como bundler
+* **Zustand** para gestión de estado
+* **React Router DOM** para enrutamiento
+* **Axios** para consumo de API
+* **TailwindCSS** para estilos utilitarios
+* **React Hot Toast** para notificaciones
+* **Jest** + **ts-jest** para pruebas unitarias
+* **Docker** y **Docker Compose** para desarrollo y ejecución
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📆 Prerrequisitos
+
+* Tener instalado:
+
+  * [Docker](https://www.docker.com/)
+  * [Docker Compose](https://docs.docker.com/compose/)
+  * [`make`](https://www.gnu.org/software/make/) (en Linux/macOS)
+
+> 🐳 **No es necesario tener Node.js instalado localmente.** Todo se ejecuta dentro de contenedores Docker.
+
+---
+
+## 🚀 Instalación y ejecución
+
+### ✅ Usando `Makefile` (recomendado)
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/JorgeDircio/task-scheduler-ui
+cd task-scheduler-ui
+
+# 2. Construir la imagen Docker del frontend
+make build
+
+# 3. Levantar la aplicación en http://localhost:5173
+make up
+
+# 4. Ver logs
+make logs
+
+# 5. Detener el contenedor
+make down
+
+# 6. Limpiar todo (contenedor, red, volúmenes)
+make clean
+
+# 7. Ejecutar pruebas unitarias
+make test
+
+# 8. Ejecutar pruebas con cobertura
+make test-coverage
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 🧰 Comandos directos sin `make` (alternativa)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+# Construir imagen
+docker-compose build
+
+# Levantar frontend en segundo plano
+docker-compose up -d
+
+# Ver logs en tiempo real
+docker-compose logs -f
+
+# Ejecutar pruebas
+docker-compose run --rm frontend npm run test
+
+# Ejecutar pruebas con cobertura
+docker-compose run --rm frontend npm run test:coverage
+
+# Detener contenedor
+docker-compose down
+
+# Eliminar contenedor, red y volúmenes
+docker-compose down -v --remove-orphans
 ```
-# task-scheduler-ui
+
+---
+
+## 🔢 Pruebas
+
+El proyecto incluye pruebas unitarias con `Jest`. Los archivos de prueba están ubicados en:
+
+```
+src/__tests__/
+```
+
+Puedes ejecutarlas con:
+
+```bash
+make test
+make test-coverage
+```
+
+El reporte HTML de cobertura se genera en:
+
+```
+coverage/lcov-report/index.html
+```
+
+---
+
+## 📁 Estructura del proyecto
+
+```bash
+task-scheduler-ui/
+├── coverage/                 # Reportes de cobertura Jest
+├── node_modules/             # Dependencias (contenedor)
+├── public/                   # Archivos públicos
+├── src/
+│   ├── __tests__/            # Pruebas unitarias
+│   │   └── tasks/
+│   │       └── scheduler.service.test.ts
+│   ├── assets/               # Imágenes o íconos
+│   ├── common/
+│   │   ├── api/              # Cliente HTTP base (axios)
+│   │   │   └── HttpClient.ts
+│   │   └── hooks/
+│   │       └── useFetch.ts
+│   ├── layouts/              # Layout general
+│   │   └── MainLayout.tsx
+│   ├── modules/              # Módulo de lógica por dominio (tasks)
+│   │   └── tasks/
+│   │       ├── api/          # Endpoints específicos
+│   │       ├── components/   # Componentes de UI reutilizables
+│   │       ├── hooks/        # Custom hooks (zustand)
+│   │       ├── types/        # Tipos y contratos
+│   │       └── pages/        # Vistas de página (SchedulePage, TasksPage)
+│   ├── routes/               # Rutas de la app
+│   │   └── AppRoutes.tsx
+│   ├── services/             # Servicios reutilizables (por ej. lógica de agendado)
+│   │   └── schedule.service.ts
+│   ├── index.css             # Estilos base
+│   └── main.tsx              # Entry point principal
+├── .env                      # Variables de entorno
+├── Dockerfile
+├── docker-compose.yml
+├── jest.config.js
+├── Makefile
+├── tsconfig.json
+├── vite.config.ts
+├── README.md
+├── package.json
+└── index.html
+```
+
+---
+
+## 🔗 Enlaces relacionados
+
+* [Backend del proyecto](https://github.com/JorgeDircio/task-scheduler-backend)
+* [Documentación Swagger del backend](http://localhost:3000/api-docs) (Backend corriendo localmente)
+
+---
+
+## 📄 Licencia
+
+MIT © Jorge Luis Carreón Dircio
